@@ -7,6 +7,13 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    require('daisyui'),
+  ],
+  daisyui: {
+    // クリップボード=コルク=茶色っぽいイメージ
+    themes: ["retro"],
+    logs: false,
+  }
 }
 
