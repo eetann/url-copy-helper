@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Icon from "@iconify/svelte";
-  import { cn, CopyUrlHelper } from "$lib/utils";
+  import { CopyUrlHelper, cn } from "$lib/utils";
   import type { TextDict } from "$lib/utils";
+  import Icon from "@iconify/svelte";
   let notice: number | undefined = undefined;
   let textDict: TextDict | undefined = undefined;
 
