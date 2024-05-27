@@ -9,7 +9,7 @@
     const currentTab = tabs[0];
     const title = currentTab.title ?? "No Titile";
     const url = currentTab.url ?? "No URL";
-    const helper = new CopyUrlHelper(title, url);
+    const helper = new CopyUrlHelper(title, url, true);
     textDict = helper.getTextDict();
   });
 
