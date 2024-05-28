@@ -1,30 +1,17 @@
 <script lang="ts">
-  import { CopyUrlHelper, cn } from "$lib/utils";
-  import type { TextDict } from "$lib/utils";
+  import { dictKeys, getCurrentHelper, cn, copyText } from "$lib/utils";
+  import type { DictKey, TextDict } from "$lib/utils";
   import Icon from "@iconify/svelte";
   let notice: number | undefined = undefined;
   let textDict: TextDict | undefined = undefined;
 
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    const currentTab = tabs[0];
-    const title = currentTab.title ?? "No Titile";
-    const url = currentTab.url ?? "No URL";
-    const helper = new CopyUrlHelper(title, url, true);
+  (async () => {
+    const helper = await getCurrentHelper();
     textDict = helper.getTextDict();
-  });
+  })();
 
-  async function copyText(key: string, index: number) {
-    if (!textDict) {
-      return;
-    }
-    const text = textDict[key].text;
-    const item = [
-      new window.ClipboardItem({
-        "text/html": new Blob([textDict.html.text], { type: "text/html" }),
-        "text/plain": new Blob([text], { type: "text/plain" }),
-      }),
-    ];
-    await navigator.clipboard.write(item);
+  async function onClick(key: DictKey, index: number) {
+    await copyText(textDict, key);
     notice = index;
     setTimeout(() => {
       notice = undefined;
@@ -35,26 +22,28 @@
 <main class="min-w-96 min-h-96 prose">
   <ul class="menu menu-sm">
     {#if textDict != undefined}
-      {#each Object.keys(textDict) as key, index}
+      {#each dictKeys as key, index}
         <li>
           <!-- svelte-ignore a11y-autofocus -->
           <button
             type="submit"
             tabindex={index}
-            autofocus={index === 0 ? true : false}
-            on:click={() => {
-              if (!textDict) {
-                return;
-              }
-              copyText(key, index);
+            autofocus={index === 0}
+            on:click={async () => {
+              await onClick(key, index);
             }}
             class="flex justify-between btn"
           >
             <div class="flex flex-col items-start">
-              <div class="font-bold">{textDict[key].name}</div>
+              <div class="font-bold">{key}</div>
               <div>{textDict[key].format}</div>
             </div>
-            <span class={cn("swap", notice === index ? "swap-active" : "")}>
+            <span
+              class={cn(
+                "swap",
+                notice === index ? "swap-active text-accent" : "",
+              )}
+            >
               <Icon
                 class="swap-off"
                 icon="heroicons-outline:clipboard-copy"
