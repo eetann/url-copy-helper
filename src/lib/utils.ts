@@ -25,13 +25,15 @@ const isDictKey = (key: string): key is DictKey => {
   return dictKeys.some((val) => val === key);
 };
 
-export type TextDict = Record<
-  DictKey,
-  {
-    format: string;
-    text: string;
-  }
->;
+export type TextDict = Record<DictKey, string>;
+
+export const formatDict: Record<DictKey, string> = {
+  Markdown: "[title](URL)",
+  HTML: "<a href='URL'>title</a>",
+  URL: "URL",
+  Title: "title",
+  WikiLink: "[[URL|title]]",
+};
 
 export class CopyUrlHelper {
   private title;
@@ -70,20 +72,11 @@ export class CopyUrlHelper {
 
   getTextDict(): TextDict {
     return {
-      Markdown: {
-        format: "[title](URL)",
-        text: this.getMarkdown(),
-      },
-      HTML: {
-        format: "<a href='URL'>title</a>",
-        text: this.getHTML(),
-      },
-      URL: { format: "URL", text: this.getUrl() },
-      Title: { format: "title", text: this.getTitle() },
-      WikiLink: {
-        format: "[[URL|title]]",
-        text: this.getWikiLink(),
-      },
+      Markdown: this.getMarkdown(),
+      HTML: this.getHTML(),
+      URL: this.getUrl(),
+      Title: this.getTitle(),
+      WikiLink: this.getWikiLink(),
     };
   }
 }
@@ -95,10 +88,10 @@ export async function copyText(
   if (!textDict || !isDictKey(key)) {
     return;
   }
-  const text = textDict[key].text;
+  const text = textDict[key];
   const item = [
     new ClipboardItem({
-      "text/html": new Blob([textDict.HTML.text], { type: "text/html" }),
+      "text/html": new Blob([textDict.HTML], { type: "text/html" }),
       "text/plain": new Blob([text], { type: "text/plain" }),
     }),
   ];

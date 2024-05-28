@@ -1,5 +1,11 @@
 <script lang="ts">
-  import { dictKeys, getCurrentHelper, cn, copyText } from "$lib/utils";
+  import {
+    dictKeys,
+    formatDict,
+    getCurrentHelper,
+    cn,
+    copyText,
+  } from "$lib/utils";
   import type { DictKey, TextDict } from "$lib/utils";
   import Icon from "@iconify/svelte";
   let notice: number | undefined = undefined;
@@ -36,7 +42,7 @@
           >
             <div class="flex flex-col items-start">
               <div class="font-bold">{key}</div>
-              <div>{textDict[key].format}</div>
+              <div>{formatDict[key]}</div>
             </div>
             <span
               class={cn(
