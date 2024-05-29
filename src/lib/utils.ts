@@ -2,98 +2,98 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...args: ClassValue[]) {
-  return twMerge(clsx(args));
+	return twMerge(clsx(args));
 }
 
-export async function getCurrentHelper() {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  const title = tab.title ?? "No Titile";
-  const url = tab.url ?? "No URL";
-  return new CopyUrlHelper(title, url, true);
+export async function getCurrentTab() {
+	const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+	return tab;
 }
 
 export const dictKeys = [
-  "Markdown",
-  "HTML",
-  "URL",
-  "Title",
-  "WikiLink",
+	"Markdown",
+	"HTML",
+	"URL",
+	"Title",
+	"WikiLink",
 ] as const;
 export type DictKey = (typeof dictKeys)[number];
 
-const isDictKey = (key: string): key is DictKey => {
-  return dictKeys.some((val) => val === key);
+const isDictKey = (key: string | number): key is DictKey => {
+	return dictKeys.some((val) => val === key);
 };
 
 export type TextDict = Record<DictKey, string>;
 
 export const formatDict: Record<DictKey, string> = {
-  Markdown: "[title](URL)",
-  HTML: "<a href='URL'>title</a>",
-  URL: "URL",
-  Title: "title",
-  WikiLink: "[[URL|title]]",
+	Markdown: "[title](URL)",
+	HTML: "<a href='URL'>title</a>",
+	URL: "URL",
+	Title: "title",
+	WikiLink: "[[URL|title]]",
 };
 
-export class CopyUrlHelper {
-  private title;
-  private url;
-  constructor(title: string, url: string, githubOnlyRepo: boolean) {
-    this.title = title;
-    if (githubOnlyRepo && /github.com\/[^\/]*\/[^\/]*$/.test(url)) {
-      const capture = /\/(.*):.*$/.exec(title);
-      if (capture?.[1]) {
-        this.title = capture[1];
-      }
-    }
-    // NOTE: chrome.tabs.queryで取得したURLはエンコード済み
-    this.url = url;
-  }
-
-  getUrl() {
-    return this.url;
-  }
-
-  getTitle() {
-    return this.title;
-  }
-
-  getHTML() {
-    return `<a href="${this.url}">${this.title}</a>`;
-  }
-
-  getMarkdown() {
-    return `[${this.title}](${this.url})`;
-  }
-
-  getWikiLink() {
-    return `[[${this.url}|${this.title}]]`;
-  }
-
-  getTextDict(): TextDict {
-    return {
-      Markdown: this.getMarkdown(),
-      HTML: this.getHTML(),
-      URL: this.getUrl(),
-      Title: this.getTitle(),
-      WikiLink: this.getWikiLink(),
-    };
-  }
-}
-
 export async function copyText(
-  textDict: TextDict | undefined,
-  key: DictKey | string,
+	key: DictKey | string | number,
+	_title: string | undefined,
+	_url: string | undefined,
 ) {
-  if (!textDict || !isDictKey(key)) {
-    return;
-  }
-  const text = textDict[key];
-  const item = [
-    new ClipboardItem({
-      "text/html": new Blob([textDict.HTML], { type: "text/html" }),
-      "text/plain": new Blob([text], { type: "text/plain" }),
-    }),
-  ];
-  await navigator.clipboard.write(item);
+	if (typeof key === "number") {
+		return;
+	}
+
+	let title = _title ?? "No Titile";
+	// NOTE: chrome.tabs.queryで取得したURLはエンコード済み
+	const url = _url ?? "No URL";
+	if (/github.com\/[^\/]*\/[^\/]*$/.test(url)) {
+		const capture = /\/(.*):.*$/.exec(title);
+		if (capture?.[1]) {
+			title = capture[1];
+		}
+	}
+
+	function getUrl() {
+		return url;
+	}
+
+	function getTitle() {
+		return title;
+	}
+
+	function getHTML() {
+		return `<a href="${url}">${title}</a>`;
+	}
+
+	function getMarkdown() {
+		return `[${title}](${url})`;
+	}
+
+	function getWikiLink() {
+		return `[[${url}|${title}]]`;
+	}
+
+	function getText(key: string): string {
+		switch (key) {
+			case "Markdown":
+				return getMarkdown();
+			case "HTML":
+				return getHTML();
+			case "URL":
+				return getUrl();
+			case "Title":
+				return getTitle();
+			case "WikiLink":
+				return getWikiLink();
+		}
+		return "";
+	}
+
+	// TODO: ここでtabを探せないので、copyTextの引数にurlとtitleを入れたほうが良さげ
+	const item = [
+		new ClipboardItem({
+			"text/html": new Blob([getHTML()], { type: "text/html" }),
+			"text/plain": new Blob([getText(key)], { type: "text/plain" }),
+		}),
+	];
+	await navigator.clipboard.write(item);
 }

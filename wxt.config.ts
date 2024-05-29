@@ -5,7 +5,7 @@ import path from "node:path";
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   manifest: {
-    permissions: ["tabs"],
+    permissions: ["tabs", "contextMenus", "activeTab", "scripting"],
   },
   srcDir: "src",
   vite: () => ({
