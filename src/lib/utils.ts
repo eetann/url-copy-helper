@@ -19,7 +19,7 @@ export const dictKeys = [
 ] as const;
 export type DictKey = (typeof dictKeys)[number];
 
-const isDictKey = (key: string | number): key is DictKey => {
+export const isDictKey = (key: string | number): key is DictKey => {
 	return dictKeys.some((val) => val === key);
 };
 
@@ -42,7 +42,7 @@ export async function copyText(
 		return;
 	}
 
-	let title = _title ?? "No Titile";
+	let title = _title ?? "No Title";
 	// NOTE: chrome.tabs.queryで取得したURLはエンコード済み
 	const url = _url ?? "No URL";
 	if (/github.com\/[^\/]*\/[^\/]*$/.test(url)) {
@@ -88,7 +88,6 @@ export async function copyText(
 		return "";
 	}
 
-	// TODO: ここでtabを探せないので、copyTextの引数にurlとtitleを入れたほうが良さげ
 	const item = [
 		new ClipboardItem({
 			"text/html": new Blob([getHTML()], { type: "text/html" }),
@@ -96,4 +95,19 @@ export async function copyText(
 		}),
 	];
 	await navigator.clipboard.write(item);
+	// TODO: アイコンの一時的な変更
+}
+
+export async function copyTextFromServideWorker(
+	key: DictKey | string | number,
+) {
+	const tab = await getCurrentTab();
+	if (!tab.id) {
+		return;
+	}
+	chrome.scripting.executeScript({
+		target: { tabId: tab.id },
+		args: [key, tab.title, tab.url],
+		func: copyText,
+	});
 }

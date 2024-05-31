@@ -1,4 +1,11 @@
-import { copyText, dictKeys, formatDict, getCurrentTab } from "$lib/utils";
+import {
+	copyText,
+	copyTextFromServideWorker,
+	dictKeys,
+	formatDict,
+	getCurrentTab,
+	isDictKey,
+} from "$lib/utils";
 export default defineBackground(() => {
 	// メニューの登録
 	chrome.runtime.onInstalled.addListener(() => {
@@ -16,14 +23,13 @@ export default defineBackground(() => {
 	});
 	// クリックイベントの定義
 	chrome.contextMenus.onClicked.addListener(async (info) => {
-		const tab = await getCurrentTab();
-		if (!tab.id) {
-			return;
+		await copyTextFromServideWorker(info.menuItemId);
+	});
+
+	// ショートカットキー経由の実行
+	chrome.commands.onCommand.addListener(async (command) => {
+		if (isDictKey(command)) {
+			await copyTextFromServideWorker(command);
 		}
-		chrome.scripting.executeScript({
-			target: { tabId: tab.id },
-			args: [info.menuItemId, tab.title ?? "No Titile", tab.url ?? "No URL"],
-			func: copyText,
-		});
 	});
 });

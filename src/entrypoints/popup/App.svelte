@@ -1,11 +1,18 @@
 <script lang="ts">
-  import { dictKeys, formatDict, cn, copyText } from "$lib/utils";
+  import {
+    cn,
+    copyText,
+    dictKeys,
+    formatDict,
+    getCurrentTab,
+  } from "$lib/utils";
   import type { DictKey } from "$lib/utils";
   import Icon from "@iconify/svelte";
   let notice: number | undefined = undefined;
 
   async function onClick(key: DictKey, index: number) {
-    await copyText(key);
+    const tab = await getCurrentTab();
+    await copyText(key, tab.title, tab.url);
     notice = index;
     setTimeout(() => {
       notice = undefined;
