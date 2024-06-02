@@ -5,8 +5,22 @@ import path from "node:path";
 // See https://wxt.dev/api/config.html
 export default defineConfig({
 	manifest: {
+		name: "URL Copy Helper",
+		description: "Copy current URL and Title. Rich Text is avalable!",
 		permissions: ["tabs", "contextMenus", "activeTab", "scripting"],
+		action: {
+			default_popup: "popup.html",
+			default_icon: {
+				"32": "icon/32.png",
+				"48": "icon/48.png",
+				"96": "icon/96.png",
+				"128": "icon/128.png",
+			},
+		},
 		commands: {
+			popup: {
+				description: "Open popup view",
+			},
 			Markdown: {
 				description: "Copy in Markdown format",
 			},

@@ -37,9 +37,9 @@ export async function copyText(
 	key: DictKey | string | number,
 	_title: string | undefined,
 	_url: string | undefined,
-) {
+): Promise<boolean> {
 	if (typeof key === "number") {
-		return;
+		return false;
 	}
 
 	let title = _title ?? "No Title";
@@ -88,14 +88,19 @@ export async function copyText(
 		return "";
 	}
 
-	const item = [
-		new ClipboardItem({
-			"text/html": new Blob([getHTML()], { type: "text/html" }),
-			"text/plain": new Blob([getText(key)], { type: "text/plain" }),
-		}),
-	];
-	await navigator.clipboard.write(item);
-	// TODO: アイコンの一時的な変更
+	try {
+		const item = [
+			new ClipboardItem({
+				"text/html": new Blob([getHTML()], { type: "text/html" }),
+				"text/plain": new Blob([getText(key)], { type: "text/plain" }),
+			}),
+		];
+		await navigator.clipboard.write(item);
+		return true;
+	} catch (e) {
+		console.log(e);
+	}
+	return false;
 }
 
 export async function copyTextFromServideWorker(
@@ -105,9 +110,19 @@ export async function copyTextFromServideWorker(
 	if (!tab.id) {
 		return;
 	}
-	chrome.scripting.executeScript({
+	const [{ result }] = await chrome.scripting.executeScript({
 		target: { tabId: tab.id },
 		args: [key, tab.title, tab.url],
 		func: copyText,
 	});
+	if (result) {
+		changeIcon();
+	}
+}
+
+export function changeIcon() {
+	chrome.action.setIcon({ path: "icon/48-check.png" });
+	setTimeout(() => {
+		chrome.action.setIcon({ path: "icon/48.png" });
+	}, 3000);
 }

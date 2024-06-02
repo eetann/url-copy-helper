@@ -1,9 +1,9 @@
+import { onMessage } from "$lib/message";
 import {
-	copyText,
+	changeIcon,
 	copyTextFromServideWorker,
 	dictKeys,
 	formatDict,
-	getCurrentTab,
 	isDictKey,
 } from "$lib/utils";
 export default defineBackground(() => {
@@ -28,8 +28,17 @@ export default defineBackground(() => {
 
 	// ショートカットキー経由の実行
 	chrome.commands.onCommand.addListener(async (command) => {
+		if (command === "popup") {
+			await chrome.action.setPopup({ popup: "popup.html" });
+			chrome.action.openPopup();
+		}
 		if (isDictKey(command)) {
 			await copyTextFromServideWorker(command);
 		}
+	});
+
+	// アイコン変更の実行
+	onMessage("makeChangeIcon", () => {
+		changeIcon();
 	});
 });
