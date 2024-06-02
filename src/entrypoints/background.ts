@@ -28,10 +28,13 @@ export default defineBackground(() => {
 
 	// ショートカットキー経由の実行
 	chrome.commands.onCommand.addListener(async (command) => {
-		if (command === "popup") {
-			await chrome.action.setPopup({ popup: "popup.html" });
-			chrome.action.openPopup();
-		}
+		// NOTE: chrome.action.openPopup()がRequires policyなので一旦保留
+		// https://groups.google.com/a/chromium.org/g/chromium-extensions/c/JNBpvtT4gYI
+		//
+		// if (command === "popup") {
+		// 	await chrome.action.setPopup({ popup: "popup.html" });
+		// 	await chrome.action.openPopup();
+		// }
 		if (isDictKey(command)) {
 			await copyTextFromServideWorker(command);
 		}

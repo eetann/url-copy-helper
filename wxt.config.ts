@@ -18,9 +18,9 @@ export default defineConfig({
 			},
 		},
 		commands: {
-			popup: {
-				description: "Open popup view",
-			},
+			// popup: {
+			// 	description: "Open popup view",
+			// },
 			Markdown: {
 				description: "Copy in Markdown format",
 			},
