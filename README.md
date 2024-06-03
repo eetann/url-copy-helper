@@ -6,7 +6,7 @@ You can copy URL and Title in several formats.
 
 In other words, if you paste it in a tool like Notion or Slack, it becomes a link!
 
-![Rich text & plain text](./images/2type-text.jpg)
+![Rich text & plain text](./docs/images/2type-text.jpg)
 
 If it is just text input, it will be plain text in the format you specify.
 
@@ -24,7 +24,7 @@ If it is just text input, it will be plain text in the format you specify.
 
 You can copy from Popup, Shortcut, and Right-click menu.
 
-![usage](./images/run-3way.jpg)
+![usage](./docs/images/run-3way.jpg)
 
 You're free to set up your own shortcut keys at `chrome://extensions/shortcuts`.
 
