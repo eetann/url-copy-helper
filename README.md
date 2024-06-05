@@ -1,4 +1,4 @@
-# Copy URL Helper
+# URL Copy Helper
 You can copy URL and Title in several formats.
 
 ## Features

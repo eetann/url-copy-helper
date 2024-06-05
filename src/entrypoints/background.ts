@@ -10,7 +10,7 @@ export default defineBackground(() => {
 	// メニューの登録
 	chrome.runtime.onInstalled.addListener(() => {
 		const parent = chrome.contextMenus.create({
-			title: "Copy URL Helper",
+			title: "URL Copy Helper",
 			id: "parent",
 		});
 		for (const key of dictKeys) {
