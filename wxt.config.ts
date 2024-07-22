@@ -6,7 +6,7 @@ import path from "node:path";
 export default defineConfig({
 	manifest: {
 		name: "URL Copy Helper",
-		version: "1.0.2",
+		version: "1.0.3",
 		description: "Copy current URL and Title. Rich Text is avalable!",
 		permissions: ["tabs", "contextMenus", "activeTab", "scripting"],
 		action: {

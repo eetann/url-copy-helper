@@ -1,12 +1,13 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { browser } from "wxt/browser";
 
 export function cn(...args: ClassValue[]) {
 	return twMerge(clsx(args));
 }
 
 export async function getCurrentTab() {
-	const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+	const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
 	return tab;
 }
 
@@ -121,8 +122,8 @@ export async function copyTextFromServideWorker(
 }
 
 export function changeIcon() {
-	chrome.action.setIcon({ path: "icon/48-check.png" });
+	browser.action.setIcon({ path: "icon/48-check.png" });
 	setTimeout(() => {
-		chrome.action.setIcon({ path: "icon/48.png" });
+		browser.action.setIcon({ path: "icon/48.png" });
 	}, 3000);
 }

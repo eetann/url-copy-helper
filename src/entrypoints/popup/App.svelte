@@ -18,7 +18,8 @@
       // NOTE: messageにしないと、popupを閉じた時点で
       // アイコンリセットが反映されなくなる
       try {
-        await sendMessage("makeChangeIcon", "");
+        // 2024年7月22日時点では、Arcではアイコンの変更ができない
+        await sendMessage("makeChangeIcon", undefined);
       } catch (e) {
         console.log(e);
       }
