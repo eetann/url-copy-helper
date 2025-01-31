@@ -8,13 +8,13 @@ import {
 } from "$lib/utils";
 export default defineBackground(() => {
 	// メニューの登録
-	chrome.runtime.onInstalled.addListener(() => {
-		const parent = chrome.contextMenus.create({
+	browser.runtime.onInstalled.addListener(() => {
+		const parent = browser.contextMenus.create({
 			title: "URL Copy Helper",
 			id: "parent",
 		});
 		for (const key of dictKeys) {
-			chrome.contextMenus.create({
+			browser.contextMenus.create({
 				title: `${key}: ${formatDict[key]}`,
 				id: `${key}`,
 				parentId: parent,
@@ -22,18 +22,18 @@ export default defineBackground(() => {
 		}
 	});
 	// クリックイベントの定義
-	chrome.contextMenus.onClicked.addListener(async (info) => {
+	browser.contextMenus.onClicked.addListener(async (info) => {
 		await copyTextFromServideWorker(info.menuItemId);
 	});
 
 	// ショートカットキー経由の実行
-	chrome.commands.onCommand.addListener(async (command) => {
-		// NOTE: chrome.action.openPopup()がRequires policyなので一旦保留
+	browser.commands.onCommand.addListener(async (command) => {
+		// NOTE: browser.action.openPopup()がRequires policyなので一旦保留
 		// https://groups.google.com/a/chromium.org/g/chromium-extensions/c/JNBpvtT4gYI
 		//
 		// if (command === "popup") {
-		// 	await chrome.action.setPopup({ popup: "popup.html" });
-		// 	await chrome.action.openPopup();
+		// 	await browser.action.setPopup({ popup: "popup.html" });
+		// 	await browser.action.openPopup();
 		// }
 		if (isDictKey(command)) {
 			await copyTextFromServideWorker(command);

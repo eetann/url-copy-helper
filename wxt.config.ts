@@ -1,12 +1,12 @@
-import { defineConfig } from "wxt";
-import { svelte } from "@sveltejs/vite-plugin-svelte";
 import path from "node:path";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { defineConfig } from "wxt";
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
 	manifest: {
 		name: "URL Copy Helper",
-		version: "1.0.3",
+		version: "1.0.4",
 		description: "Copy current URL and Title. Rich Text is avalable!",
 		permissions: ["tabs", "contextMenus", "activeTab", "scripting"],
 		action: {
@@ -36,6 +36,12 @@ export default defineConfig({
 			},
 			WikiLink: {
 				description: "Copy in WikiLink format",
+			},
+		},
+		// for forefox
+		browser_specific_settings: {
+			gecko: {
+				id: "url-copy-helper@eetann",
 			},
 		},
 	},

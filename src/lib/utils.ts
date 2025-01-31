@@ -44,7 +44,7 @@ export async function copyText(
 	}
 
 	let title = _title ?? "No Title";
-	// NOTE: chrome.tabs.queryで取得したURLはエンコード済み
+	// NOTE: browser.tabs.queryで取得したURLはエンコード済み
 	const url = _url ?? "No URL";
 	if (/github.com\/[^\/]*\/[^\/]*$/.test(url)) {
 		const capture = /\/(.*):.*$/.exec(title);
@@ -111,7 +111,7 @@ export async function copyTextFromServideWorker(
 	if (!tab.id) {
 		return;
 	}
-	const [{ result }] = await chrome.scripting.executeScript({
+	const [{ result }] = await browser.scripting.executeScript({
 		target: { tabId: tab.id },
 		args: [key, tab.title, tab.url],
 		func: copyText,
@@ -122,8 +122,15 @@ export async function copyTextFromServideWorker(
 }
 
 export function changeIcon() {
-	browser.action.setIcon({ path: "icon/48-check.png" });
-	setTimeout(() => {
-		browser.action.setIcon({ path: "icon/48.png" });
-	}, 3000);
+	if (import.meta.env.MANIFEST_VERSION === 2) {
+		browser.browserAction.setIcon({ path: "icon/48-check.png" });
+		setTimeout(() => {
+			browser.browserAction.setIcon({ path: "icon/48.png" });
+		}, 3000);
+	} else {
+		browser.action.setIcon({ path: "icon/48-check.png" });
+		setTimeout(() => {
+			browser.action.setIcon({ path: "icon/48.png" });
+		}, 3000);
+	}
 }
